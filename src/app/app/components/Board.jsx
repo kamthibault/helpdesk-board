@@ -62,5 +62,43 @@ export default function Board() {
         return() => clearInterval(interval);
     }, []);
 
-    
+    //Visible tickets
+    const visibleTickets = tickets.filter(t =>{
+        const matchStatus = filters.status === 'All' || t.status === filters.status;
+        const matchPriority = filters.priority === 'All' || t.priority === filters.priority;
+        const matchSearch =
+        t.title.toLowerCase().include(search.toLowerCase())||
+        t.description.toLowerCase().includes(SearchBox.toLowerCase());
+        return matchStatus && matchPriority && matchSearch;
+    });
+
+        const handleAddToQueue = ticketId => {
+            setQueue(prev => ({ ...prev, [ticketID]: true}));
+        };
+
+        const handleRemoveFromQueue = ticketId => {
+            setQueue(prev => {
+                const updated ={ ...prev };
+                delete updated[ticketId];
+                return updated;
+            });
+        };
+        const handleCLearQueue = () => setQueue ({});
+
+        return (
+            <div className="space-y-4">
+                <div className="flex flex-wrap gap-4 items-center justify-between">
+                    <StatusFilter value={filters.status} onChange={val => setFilters(f => ({ ...f,status: val}))}/>
+                    <PriorityFilter value={filters.priority} onChange={val => setFilters(f => ({ ...f, priority: val}))}/>
+                    <SearchBox value={search} onChange={setSearch} />
+                    <MyQueueSummary
+                    tickets={tickets.filter(t=> queue[t.id])}
+                    onRemove={handleRemoveFromQueue}
+                    onClear={handleClearQueue}
+                    />
+                </div>
+                <StatusMessage loading={loading} error={error} empty={!loading && visibleTickets.length === 0} />
+                <TicketList tickets={visibleTickets} queue={queue} onAddToQueue={handleAddToQueue} />
+            </div>
+        );
 }
