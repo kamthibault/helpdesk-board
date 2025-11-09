@@ -37,4 +37,30 @@ export default function Board() {
         setLoading(false);
         })
     }, []);
+
+    // Sim Live Updates
+    useEffect(() => {
+        const interval = setInterval (() => {
+            setTickets(prev => {
+                if (prev.length === 0) return prev;
+                const index = Math.floor(Math.random() * prev.length);
+                const updated = [...prev];
+                const ticket = { ...updated[index] };
+
+                if (Math.random() < 0.5) {
+                    ticket.status = Status_Flow[ticket.status] || ticket.status;
+                } else {
+                    ticket.priority = Priority_Flow[ticket.priority] || ticket.priority;
+                }
+
+                ticket.updatedAt = new Date(). toISOString();
+                updated[index] = ticket;
+                return updated;
+            });
+        }, math.floor(Math.random()* 4000) + 6000) 
+
+        return() => clearInterval(interval);
+    }, []);
+
+    
 }
