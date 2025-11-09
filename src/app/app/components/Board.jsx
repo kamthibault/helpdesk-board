@@ -28,5 +28,13 @@ export default function Board() {
     const [filters, setFilters] = useState ({ status: 'All', priority: 'All'});
     const [queue, setQueue] = useState({});
 
-    
+    //Fetch tickets on mount
+    useEffect(() => {
+        fetch('/api/tickets')
+        .then(res => res.json())
+        .then (data => {
+        setTickets(data);
+        setLoading(false);
+        })
+    }, []);
 }
